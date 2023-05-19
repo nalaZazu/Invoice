@@ -1,0 +1,38 @@
+.sidebar_nav {
+    background-color: #373b53;
+    align-items: center;
+    border-radius: 0 20px 20px 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    left: 0;
+    max-width: 103px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+/* @media (max-width: 786px) {
+    .sidebar_nav {
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+    }
+} */
+
+.sidebar_avtar {
+    width: 40px;
+    border-radius: 50%;
+    height: 40px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.sidebar_separate {
+    background: #494e6e;
+    height: 1px;
+    width: 100px;
+    margin-bottom: 28px;
+}
