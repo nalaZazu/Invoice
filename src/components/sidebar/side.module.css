@@ -14,13 +14,13 @@
     z-index: 2;
 }
 
-/* @media (max-width: 786px) {
+@media (max-width: 786px) {
     .sidebar_nav {
         display: flex;
         flex-direction: row;
         position: absolute;
     }
-} */
+}
 
 .sidebar_avtar {
     width: 40px;

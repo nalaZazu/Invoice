@@ -2,6 +2,10 @@
 // import { Dialog, Transition } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 
+import { Formik } from "formik"
+import { Form } from "react-router-dom"
+import TextField from "./TextField"
+
 
 
 // export default function Example() {
@@ -464,44 +468,81 @@
 
 // export default Example
 
-import React from "react";
-import { useFormik } from "formik";
-import { SignupSchema } from "./schema";
-const Example = () => {
+// import React from "react";
+// import { useFormik } from "formik";
+// import { SignupSchema } from "./schema";
+// const Example = () => {
 
-    const { values, errors, touched, handleSubmit, handleBlur, handleChange } = useFormik({
-        initialValues: {
-            name: "",
-            email: "",
-            password: "",
-            confirm_password: "",
-        },
-        validationSchema: SignupSchema,
-        onSubmit: values => {
-            console.log(values)
-        }
-    })
+//     const { values, errors, touched, handleSubmit, handleBlur, handleChange } = useFormik({
+//         initialValues: {
+//             name: "",
+//             email: "",
+//             password: "",
+//             confirm_password: "",
+//         },
+//         validationSchema: SignupSchema,
+//         onSubmit: values => {
+//             console.log(values)
+//         }
+//     })
+//     return (
+//         <React.Fragment>
+//             <form onSubmit={handleSubmit}>
+//                 <label htmlFor="name">Name</label>
+//                 <input id="name" className="border-solid border-2 border-slate-950" type="name" name="name" value={values.name} onChange={handleChange}
+//                     onBlur={handleBlur}
+//                 />
+//                 {touched.name && errors.name ? <p>Enter your name</p> : null}
+//                 <label htmlFor="email">Email</label>
+//                 <input id="email" type="email" className="border-solid border-2 border-slate-950" name="email" value={values.email} onChange={handleChange} onBlur={handleBlur} />
+//                 {touched.email && errors.email ? <p>Enter your email</p> : null}
+//                 <label htmlFor="password">password</label>
+//                 <input id="password" type="password" className="border-solid border-2 border-slate-950" name="password" value={values.password} onChange={handleChange} onBlur={handleBlur} />
+//                 {touched.password && errors.password ? <p>Enter your password</p> : null}
+//                 <label htmlFor="password">confirm password</label>
+//                 <input id="confirm_password" type="password" className="border-solid border-2 border-slate-950" name="confirm_password" value={values.confirm_password} onChange={handleChange} onBlur={handleBlur} />
+//                 {touched.confirm_password && errors.confirm_password ? <p>Enter your confrim_password</p> : null}
+//                 <button type="submit">Submit</button>
+//             </form>
+
+//         </React.Fragment>
+//     )
+// }
+
+// export default Example
+import React from "react"
+const Example = () => {
     return (
         <React.Fragment>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="name">Name</label>
-                <input id="name" className="border-solid border-2 border-slate-950" type="name" name="name" value={values.name} onChange={handleChange}
-                    onBlur={handleBlur}
-                />
-                {touched.name && errors.name ? <p>Enter your name</p> : null}
-                <label htmlFor="email">Email</label>
-                <input id="email" type="email" className="border-solid border-2 border-slate-950" name="email" value={values.email} onChange={handleChange} onBlur={handleBlur} />
-                {touched.email && errors.email ? <p>Enter your email</p> : null}
-                <label htmlFor="password">password</label>
-                <input id="password" type="password" className="border-solid border-2 border-slate-950" name="password" value={values.password} onChange={handleChange} onBlur={handleBlur} />
-                {touched.password && errors.password ? <p>Enter your password</p> : null}
-                <label htmlFor="password">confirm password</label>
-                <input id="confirm_password" type="password" className="border-solid border-2 border-slate-950" name="confirm_password" value={values.confirm_password} onChange={handleChange} onBlur={handleBlur} />
-                {touched.confirm_password && errors.confirm_password ? <p>Enter your confrim_password</p> : null}
-                <button type="submit">Submit</button>
-            </form>
+            <Formik
 
-        </React.Fragment>
+                initialValues={{
+                    name: '',
+                    email: "",
+                    password: '',
+
+                }}
+                onSubmit={(values) => {
+                    console.log(values)
+                }}
+
+            >
+                {
+                    formik => (
+                        <>
+                            <form onSubmit={formik.handleSubmit}>
+                                <TextField label="name" name="name" type="text" />
+                                <TextField label="email" name="email" type="email" />
+                                <TextField label="password" name="password" type="password" />
+                                <button type="submit">Sumbit</button>
+                            </form>
+                        </>
+                    )
+                }
+
+            </Formik>
+
+        </React.Fragment >
     )
 }
 
