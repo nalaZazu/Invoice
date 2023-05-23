@@ -1,12 +1,13 @@
 import React from "react";
 import invoice from "./Invoice.module.css";
-import data from "./InvoiceData";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-// import { img } from "../Image/icon-arrow-right.9e19be64001504a17c14.svg"
+import data from "../../constants/InvoiceData";
 function Invoice() {
-  let invoiceData = useSelector(store => store.userSection.invoice);
+  let invoiceData = useSelector((store) => store.counter.invoice);
+  let {address} = useSelector((store) => store.counter.invoice);
   console.log(invoiceData, "invoice page data");
+  console.log(address, "invoice page data ofy");
   const display = data.map((item) => {
     const { id, span, name, money, date } = item;
     return (

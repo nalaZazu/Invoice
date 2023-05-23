@@ -2,18 +2,20 @@
 // import { Dialog, Transition } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 
-import { Formik } from "formik"
-import { Form } from "react-router-dom"
-import TextField from "./TextField"
-
-
+import { Formik } from "formik";
+import { Form } from "react-router-dom";
+import TextField from "./TextField";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { decrement, increment } from "../redux/reducer/reducer";
+import { store } from "../redux/store/store";
 
 // export default function Example() {
 //     const [open, setOpen] = useState(true)
 
 //     return (
 //         <button >
-//         open 
+//         open
 //             <Transition.Root show={open} as={Fragment}>
 //                 <Dialog as="div" className="relative z-10" onClose={setOpen}>
 //                     <Transition.Child
@@ -83,7 +85,6 @@ import TextField from "./TextField"
 // }
 
 // import { useState } from 'react';
-
 
 // function Example() {
 //     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -326,7 +327,6 @@ import TextField from "./TextField"
 //                     </form>
 //                 </div>
 
-
 //             </div>
 //         </div>
 //     );
@@ -510,40 +510,81 @@ import TextField from "./TextField"
 // }
 
 // export default Example
-import React from "react"
+// import React from "react"
+// const Example = () => {
+//     return (
+//         <React.Fragment>
+//             <Formik
+
+//                 initialValues={{
+//                     name: '',
+//                     email: "",
+//                     password: '',
+
+//                 }}
+//                 onSubmit={(values) => {
+//                     console.log(values)
+//                 }}
+
+//             >
+//                 {
+//                     formik => (
+//                         <>
+//                             <form onSubmit={formik.handleSubmit}>
+//                                 <TextField label="name" name="name" type="text" />
+//                                 <TextField label="email" name="email" type="email" />
+//                                 <TextField label="password" name="password" type="password" />
+//                                 <button type="submit">Sumbit</button>
+//                             </form>
+//                         </>
+//                     )
+//                 }
+
+//             </Formik>
+
+//         </React.Fragment >
+//     )
+// }
+
+// export default Example
+
 const Example = () => {
-    return (
-        <React.Fragment>
-            <Formik
+  //   let count = useSelector((store) => store.counter.value);
+  //   let name = useSelector((store) => store.counter.name);
+  let dispatch = useDispatch();
+  let counter = useSelector((store) => store);
 
-                initialValues={{
-                    name: '',
-                    email: "",
-                    password: '',
+  const updateAge = (age) => {
+    dispatch({
+      type: "UPDAET_AGE",
+      payload: age,
+    });
+  };
+  return (
+    <React.Fragment>
+      {/* <div>
+        <h1>{count}</h1>
+        <h1>{name}</h1>
+        <button
+          aria-label="Increment value"
+          onClick={() => dispatch(increment())}>
+          Increment
+        </button>
+        <br />
+        <button
+          aria-label="Decrement value"
+          onClick={() => dispatch(decrement())}>
+          Decrement
+        </button>
+      </div> */}
 
-                }}
-                onSubmit={(values) => {
-                    console.log(values)
-                }}
+      <h1>{counter.counter.name}</h1>
+      <h1>{counter.counter.age}</h1>
+      <button className="" onClick={() => updateAge(40)}>
+        updateAge
+      </button>
+    </React.Fragment>
+  );
+};
 
-            >
-                {
-                    formik => (
-                        <>
-                            <form onSubmit={formik.handleSubmit}>
-                                <TextField label="name" name="name" type="text" />
-                                <TextField label="email" name="email" type="email" />
-                                <TextField label="password" name="password" type="password" />
-                                <button type="submit">Sumbit</button>
-                            </form>
-                        </>
-                    )
-                }
-
-            </Formik>
-
-        </React.Fragment >
-    )
-}
-
-export default Example
+export default Example;

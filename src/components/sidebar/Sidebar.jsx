@@ -1,11 +1,10 @@
 import React from "react";
 import sidebar from "./side.module.css";
-import logo from "../Image/logo.png";
-import avatar from "../Image/download.jpg";
+import logo from "../../assets/Images/logo.png";
+import avatar from "../../assets/Images/download.jpg";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 function Sidebar() {
-
   return (
     <React.Fragment>
       <div className={`${sidebar.sidebar_nav}`}>
