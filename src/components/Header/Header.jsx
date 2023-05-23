@@ -5,8 +5,10 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import header from "./Header.module.css"
 import Invoice from '../Invoice/Invoice'
 import { Dialog } from '@headlessui/react'
-import { ErrorMessage, Field, FieldArray, Form, Formik, getIn } from 'formik'
+import { FieldArray, Form, Formik, getIn } from 'formik'
 import * as Yup from "yup";
+import Sidebar from '../sidebar/Sidebar'
+import { useDispatch } from 'react-redux'
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -15,6 +17,8 @@ function Header() {
     const toggleButton = () => {
         setOpen(!open)
     }
+    // store value configuration
+    let dispatch= useDispatch()
     const SignupSchema = Yup.object().shape({
         address: Yup.string().required("Address is reuqired"),
         city: Yup.string().required("City Name is required"),
@@ -129,6 +133,7 @@ function Header() {
                                 <button type="button" className='rounded font-bold' onClick={toggleButton} >
                                     {setOpen ? <button className="p-2">New Invoice</button> : <button className="p-2">New Invoice</button>}
                                 </button>
+
                                 <Transition.Root show={open} as={Fragment}>
                                     <Dialog as="div" className="relative z-10" onClose={setOpen}>
                                         <Transition.Child
@@ -173,10 +178,14 @@ function Header() {
                                                                     </button> */}
                                                                 </div>
                                                             </Transition.Child>
-                                                            <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                                                            <div className= 'flex '>
 
-                                                                <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                                                                    {/* <Sidebar/> */}
+                                                                
+                                                            </div>
+                                                            <div className="flex h-full  absolute left-20 flex-col overflow-y-scroll bg-white py-6 shadow-xl" style={{width:"600px"}}>
+                                                            <Sidebar/>
+                                                                <div className="relative mt-6 flex-1 px-8 ">
+
                                                                     {/* Your content */}
                                                                     <Formik
                                                                         initialValues={{
@@ -203,11 +212,15 @@ function Header() {
                                                                         }}
                                                                         validationSchema={SignupSchema}
                                                                         onSubmit={values => {
+                                                                            dispatch({
+                                                                                type:"INVOICE_DATA",
+                                                                                payload:values
+                                                                            })
                                                                             // same shape as initial values
                                                                             console.log(values);
                                                                         }} >
                                                                         {({ values, handleSubmit, handleChange, errors }) => (
-                                                                            <Form className="w-full max-w-lg" onSubmit={handleSubmit}>
+                                                                            <Form className="w-full" onSubmit={handleSubmit} style={{maxWidth:"40rem"}}>
                                                                                 <Dialog.Title className="text-base font-semibold leading-6 text-indigo-500">
                                                                                     Bill From
                                                                                 </Dialog.Title>
@@ -219,7 +232,8 @@ function Header() {
                                                                                             Street Address
                                                                                         </label>
                                                                                         <input
-                                                                                            className="appearance-none block w-full bg-white text-gray-500 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                            className="appearance-none block w-full bg-white
+                                                                                             text-gray-500 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                                             id="address" name="address" value={values.address} onChange={handleChange}
                                                                                             type="text" style={getStyles(errors, 'address')} />
                                                                                     </div>
@@ -400,44 +414,7 @@ function Header() {
                                                                                     {({ insert, remove, push }) => (
                                                                                         <div>
                                                                                             {values.list_item.length > 0 &&
-                                                                                                values.list_item.map((friend, index) => {
-                                                                                                    {/* <div className="row" key={index}>
-                                                                                                        <div className="col">
-                                                                                                            <label htmlFor={`list_item.${index}.name`}>Name</label>
-                                                                                                            <Field
-                                                                                                                name={`list_item.${index}.name`}
-                                                                                                                placeholder="Jane Doe"
-                                                                                                                type="text"
-                                                                                                            />
-                                                                                                            <ErrorMessage
-                                                                                                                name={`list_item.${index}.name`}
-                                                                                                                component="div"
-                                                                                                                className="field-error"
-                                                                                                            />
-                                                                                                        </div>
-                                                                                                        <div className="col">
-                                                                                                            <label htmlFor={`list_item.${index}.email`}>Email</label>
-                                                                                                            <Field
-                                                                                                                name={`list_item.${index}.email`}
-                                                                                                                placeholder="jane@acme.com"
-                                                                                                                type="email"
-                                                                                                            />
-                                                                                                            <ErrorMessage
-                                                                                                                name={`list_item.${index}.name`}
-                                                                                                                component="div"
-                                                                                                                className="field-error"
-                                                                                                            />
-                                                                                                        </div>
-                                                                                                        <div className="col">
-                                                                                                            <button
-                                                                                                                type="button"
-                                                                                                                className="secondary"
-                                                                                                                onClick={() => remove(index)}
-                                                                                                            >
-                                                                                                                X
-                                                                                                            </button>
-                                                                                                        </div>
-                                                                                                    </div> */}
+                                                                                                values.list_item.map((item, index) => {
                                                                                                     return (
                                                                                                         <div className="flex flex-wrap  mb-2">
                                                                                                             <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -475,7 +452,6 @@ function Header() {
                                                                                                                      border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                                                                     onChange={handleChange} name={` list_item.${index}.price`}
                                                                                                                     type="text" />
-
                                                                                                             </div>
                                                                                                             <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
                                                                                                                 <label
@@ -489,7 +465,6 @@ function Header() {
                                                                                                                       focus:border-gray-500"
                                                                                                                     name={` list_item.${index}.total`} onChange={handleChange}
                                                                                                                     type="text" />
-
                                                                                                             </div>
                                                                                                             <div className='w-full md:w-1/6 px-3 mb-6 md:mb-0 mt-6 text-center'>
                                                                                                                 <button
@@ -499,8 +474,6 @@ function Header() {
                                                                                                                     X
                                                                                                                 </button>
                                                                                                             </div>
-
-
                                                                                                         </div>
                                                                                                     )
                                                                                                 })}
@@ -515,18 +488,8 @@ function Header() {
                                                                                         </div>
                                                                                     )}
                                                                                 </FieldArray>
-
                                                                                 <button className='bg-indigo-50   mt-3 text-indigo-500 p-3 rounded-full' onClick={() => setOpen(false)}>Discard</button>
                                                                                 <button type='submit' className='bg-black hover:bg-black float-right mt-3 text-indigo-500 p-3 rounded-full'>Save as Draft</button>
-
-
-
-
-
-
-
-
-
                                                                             </Form>
                                                                         )}
                                                                     </Formik>
