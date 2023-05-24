@@ -46,24 +46,29 @@ import { defer } from "react-router-dom";
 // export const {extraReducers } =counterSlice.actions;
 // export default counterSlice.reducer;
 
-const initialState = {
-  invoice: [],
-};
+// const initialState = {
+//   invoice: [],
+// };
 
-const counterReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "INVOICE_DATA":
-      return {
-        ...state,
-        invoice: action.payload,
-        // state.invoice.push(action.payload),
-      };
+// const counterReducer = (state = initialState, action) => {
+//   switch (action.type) {
+//     case "INVOICE_DATA":
+//       return {
+//         ...state,
+//         invoice: action.payload,
+//         // state.invoice.push(action.payload),
+//       };
 
-    default:
-      return {
-        ...state,
-        invoice: [...state.invoice],
-      };
-  }
-};
-export default counterReducer;
+//     default:
+//       return {
+//         ...state,
+//         invoice: [...state.invoice],
+//       };
+//   }
+// };
+// export default counterReducer;
+
+
+
+
+

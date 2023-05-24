@@ -5,11 +5,12 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import header from "./Header.module.css";
 import Invoice from "../Invoice/Invoice";
 import { Dialog } from "@headlessui/react";
-import { FieldArray, Form, Formik, getIn } from "formik";
+import { Field, FieldArray, Form, Formik, getIn } from "formik";
 import * as Yup from "yup";
-
 import { useDispatch } from "react-redux";
 import Sidebar from "../Sidebar/Sidebar";
+import { userData } from "../../state/reducer/counterReducer";
+import { v4 as uuidv4 } from "uuid";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -18,6 +19,7 @@ function Header() {
   const toggleButton = () => {
     setOpen(!open);
   };
+  let uId = uuidv4();
   // store value configuration
   let dispatch = useDispatch();
   const SignupSchema = Yup.object().shape({
@@ -43,6 +45,7 @@ function Header() {
       };
     }
   }
+  const [sub, setSub] = useState();
   return (
     <React.Fragment>
       <section className={header.header_invoice}>
@@ -77,7 +80,7 @@ function Header() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute  z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="py-1">
                         <Menu.Item>
                           {({ active }) => (
@@ -90,7 +93,7 @@ function Header() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Account settings
+                              Draft
                             </a>
                           )}
                         </Menu.Item>
@@ -105,7 +108,7 @@ function Header() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              Support
+                              pending
                             </a>
                           )}
                         </Menu.Item>
@@ -120,27 +123,10 @@ function Header() {
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              License
+                              Piad
                             </a>
                           )}
                         </Menu.Item>
-                        <form method="POST" action="#">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                type="submit"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block w-full px-4 py-2 text-left text-sm"
-                                )}
-                              >
-                                Sign out
-                              </button>
-                            )}
-                          </Menu.Item>
-                        </form>
                       </div>
                     </Menu.Items>
                   </Transition>
@@ -211,6 +197,7 @@ function Header() {
                                   {/* Your content */}
                                   <Formik
                                     initialValues={{
+                                      id: uId,
                                       address: "",
                                       city: "",
                                       zip: "",
@@ -234,12 +221,20 @@ function Header() {
                                     }}
                                     validationSchema={SignupSchema}
                                     onSubmit={(values) => {
-                                      dispatch({
-                                        type: "INVOICE_DATA",
-                                        payload: values,
-                                      });
+                                      dispatch(
+                                        userData(values)
+
+                                        // {
+
+                                        // type: "INVOICE_DATA",
+                                        // payload: values,
+                                        // }
+                                      );
                                       // same shape as initial values
-                                      console.log(values);
+                                      console.log(
+                                        userData(values),
+                                        "this is usedata value"
+                                      );
                                     }}
                                   >
                                     {({
@@ -247,6 +242,7 @@ function Header() {
                                       handleSubmit,
                                       handleChange,
                                       errors,
+                                      setFieldValue,
                                     }) => (
                                       <Form
                                         className="w-full"
@@ -422,7 +418,10 @@ function Header() {
                                               value={values.client_city}
                                               onChange={handleChange}
                                               type="text"
-                                              style={getStyles(errors, "client_city")}
+                                              style={getStyles(
+                                                errors,
+                                                "client_city"
+                                              )}
                                             />
                                           </div>
 
@@ -545,6 +544,10 @@ function Header() {
                                               {values.list_item.length > 0 &&
                                                 values.list_item.map(
                                                   (item, index) => {
+                                                    console.log(
+                                                      "item-value",
+                                                      item
+                                                    );
                                                     return (
                                                       <div className="flex flex-wrap  mb-2">
                                                         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -554,9 +557,10 @@ function Header() {
                                                           >
                                                             Item name
                                                           </label>
+                                                          {/* <Field name={`list_item.${index}.price`} /> */}
                                                           <input
                                                             className="appearance-none block w-full bg-white text-gray-500 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                            name={` list_item.${index}.list`}
+                                                            name={`list_item.${index}.list`}
                                                             onChange={
                                                               handleChange
                                                             }
@@ -566,7 +570,7 @@ function Header() {
                                                         <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
                                                           <label
                                                             className="block tracking-wide text-gray-400 text-xs  mb-2"
-                                                            htmlFor={` list_item.${index}.list`}
+                                                            htmlFor={`list_item.${index}.qty`}
                                                           >
                                                             Qty.
                                                           </label>
@@ -575,14 +579,14 @@ function Header() {
                                                             onChange={
                                                               handleChange
                                                             }
-                                                            name={` list_item.${index}.qty`}
+                                                            name={`list_item.${index}.qty`}
                                                             type="text"
                                                           />
                                                         </div>
                                                         <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
                                                           <label
                                                             className="block tracking-wide text-gray-400 text-xs  mb-2"
-                                                            htmlFor={` list_item.${index}.list`}
+                                                            htmlFor={`list_item.${index}.price`}
                                                           >
                                                             Price
                                                           </label>
@@ -591,22 +595,31 @@ function Header() {
                                                             onChange={
                                                               handleChange
                                                             }
-                                                            name={` list_item.${index}.price`}
+                                                            name={`list_item.${index}.price`}
                                                             type="text"
                                                           />
                                                         </div>
                                                         <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
                                                           <label
                                                             className="block  tracking-wide text-gray-400 text-xs  mb-2"
-                                                            htmlFor={` list_item.${index}.list`}
+                                                            htmlFor={`list_item.${index}.total`}
                                                           >
                                                             Total
                                                           </label>
                                                           <input
                                                             className="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                            name={` list_item.${index}.total`}
-                                                            onChange={
-                                                              handleChange
+                                                            name={`list_item.${index}.total`}
+                                                            value={
+                                                              item.price *
+                                                              item.qty
+                                                            }
+                                                            disabled
+                                                            onChange={() =>
+                                                              setFieldValue(
+                                                                `list_item.${index}.total`,
+                                                                item.price *
+                                                                  item.qty
+                                                              )
                                                             }
                                                             type="text"
                                                           />

@@ -2,9 +2,7 @@ import React from 'react'
 import receipt from "./Receipt.module.css"
 import { Link } from 'react-router-dom'
 import Invoicelist from './ReceiptList'
-
 function Receipt() {
-
     return (
         <React.Fragment>
             <section className={receipt.receipt_showcase}>

@@ -1,8 +1,8 @@
 // import { combineReducers, createStore } from "redux";
 
-import { configureStore, createReducer } from "@reduxjs/toolkit";
-import counterReducer from "../reducer/reducer";
-import { userReducer } from "../reducer/reducer";
+// import { configureStore, createReducer } from "@reduxjs/toolkit";
+// import counterReducer from "../reducer/reducer";
+// import { userReducer } from "../reducer/reducer";
 // const init = {
 //   invoice: [],
 // };
@@ -27,9 +27,9 @@ import { userReducer } from "../reducer/reducer";
 
 // export default mainStore;
 
-export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-    // user: userReducer,
-  },
-});
+// export const store = configureStore({
+//   reducer: {
+//     counter: counterReducer,
+//     // user: userReducer,
+//   },
+// });
