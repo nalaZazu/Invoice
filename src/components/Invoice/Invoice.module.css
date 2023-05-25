@@ -28,7 +28,7 @@
     width: 100%;
 }
 .invoice:hover{
-    outline: 1px solid #7c5dfa;;
+    outline: 1px solid #7c5dfa;
 }
 .invoice_left {
     display: flex;

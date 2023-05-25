@@ -5,7 +5,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import header from "./Header.module.css";
 import Invoice from "../Invoice/Invoice";
 import { Dialog } from "@headlessui/react";
-import { Field, FieldArray, Form, Formik, getIn } from "formik";
+import { FieldArray, Form, Formik, getIn } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import Sidebar from "../Sidebar/Sidebar";
@@ -45,7 +45,6 @@ function Header() {
       };
     }
   }
-  const [sub, setSub] = useState();
   return (
     <React.Fragment>
       <section className={header.header_invoice}>
@@ -194,7 +193,7 @@ function Header() {
                               >
                                 <Sidebar />
                                 <div className="relative mt-6 flex-1 px-8 ">
-                                  {/* Your content */}
+                                
                                   <Formik
                                     initialValues={{
                                       id: uId,
@@ -219,22 +218,10 @@ function Header() {
                                         },
                                       ],
                                     }}
+                                    enableReinitialize={true}
                                     validationSchema={SignupSchema}
                                     onSubmit={(values) => {
-                                      dispatch(
-                                        userData(values)
-
-                                        // {
-
-                                        // type: "INVOICE_DATA",
-                                        // payload: values,
-                                        // }
-                                      );
-                                      // same shape as initial values
-                                      console.log(
-                                        userData(values),
-                                        "this is usedata value"
-                                      );
+                                      dispatch(userData(values));
                                     }}
                                   >
                                     {({
@@ -544,10 +531,6 @@ function Header() {
                                               {values.list_item.length > 0 &&
                                                 values.list_item.map(
                                                   (item, index) => {
-                                                    console.log(
-                                                      "item-value",
-                                                      item
-                                                    );
                                                     return (
                                                       <div className="flex flex-wrap  mb-2">
                                                         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -664,8 +647,7 @@ function Header() {
                                         </button>
                                         <button
                                           type="submit"
-                                          className="bg-black hover:bg-black float-right mt-3 text-indigo-500 p-3 rounded-full"
-                                        >
+                                          className="bg-gray-400 hover:bg-black float-right mt-3 text-gray-700 font-bold p-3 rounded-full">
                                           Save as Draft
                                         </button>
                                       </Form>

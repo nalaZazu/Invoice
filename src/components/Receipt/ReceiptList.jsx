@@ -1,140 +1,65 @@
 import React from "react";
 import receipt from "./Receipt.module.css";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteUser, isModal } from "../../state/reducer/counterReducer";
+import Edit from "../Edit";
 function Invoicelist() {
+  let { id } = useParams();
+  let move = useNavigate();
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
-  const toggleDelete = () => {
+  let dispatch = useDispatch();
+  const toggleDelete = (id) => {
+    dispatch(isModal({ id, isOpen: open }));
     setOpen(!open);
   };
-  let { id } = useParams();
+  const handleDelete = (id) => {
+    setOpen(false);
+    dispatch(deleteUser(id));
+    move("/");
+  };
   let invoiceData = useSelector((store) => store.counter.user);
-  console.log(id, "useparam id ");
   let product = invoiceData.find((e) => e.id == id);
-  console.log(invoiceData, "invoice data");
-  console.log("receipt data in product", product);
-  // const display = invoiceData.map((item) => {
-  //   const {
-  //     address,
-  //     city,
-  //     client_city,
-  //     client_country,
-  //     date,
-  //     email,
-  //     project,
-  //     name,
-  //     list_item,
-  //     street,
-  //     zip,
-  //     code,
-  //     country,
-  //   } = item;
-  //   console.log(item, "receipt page item");
-  //   return (
-  //     <>
-  //       <div className="flex justify-between m-5">
-  //         <div className="left ">
-  //           <h1 className="text-left text-black font-bold">RT3080</h1>
-  //           <p className="text-gray-400">{project}</p>
-  //         </div>
-  //         <div className="right ">
-  //           <p className="text-left text-gray-400">{client_city}</p>
-  //           <p className="text-left  text-gray-400">{zip}</p>
-  //           {/* <p className="text-left text-gray-400">{},</p> */}
-  //           <p className="text-left text-gray-400">{client_country}</p>
-  //         </div>
-  //       </div>
-  //       {/* second div */}
-  //       <div className="flex justify-between m-5 pt-3">
-  //         <div>
-  //           <p className="text-gray-400 text-base">Invoice Date</p>
-  //           <p className="font-bold text-left">{date}</p>
-  //           <p className="pt-4  text-gray-400 text-base">payment Due</p>
-  //           <p className="font-bold text-left">{date}</p>
-  //         </div>
-  //         <div className="w-1/3">
-  //           <p className="text-left text-gray-400 text-base">Bill To</p>
-  //           <p className="font-bold text-left ">{name}</p>
-  //           <p className="text-left text-gray-400 text-base">{address},</p>
-  //           <p className="text-left text-gray-400 text-base">{code},</p>
-  //           <p className="text-left text-gray-400 text-base">{city},</p>
-  //         </div>
-  //         <div>
-  //           <p className="text-left text-gray-400">Sent to</p>
-  //           <p className="font-bold text-left">{email}</p>
-  //         </div>
-  //       </div>
-  //       {/* third div */}
-  //       <div className="flex justify-around rounded-md bg-gray-100 mx-5 pt-5 pb-5">
-  //         <div>
-  //           <p className="text-gray-400 font-bold text-sm text-left">
-  //             Item Name
-  //           </p>
-  //           <p className="pt-2 font-bold text-slate-800">{list_item[0].list}</p>
-  //         </div>
-  //         <div>
-  //           <p className="text-gray-400 font-bold text-sm text-left">QTY</p>
-  //           <p className="pt-2 font-bold text-slate-800">{list_item[0].qty}</p>
-  //         </div>
-  //         <div>
-  //           <p className="text-gray-400 font-bold text-sm text-left">Price</p>
-  //           <p className="pt-2 font-bold text-slate-800">
-  //             £ {list_item[0].price}
-  //           </p>
-  //         </div>
-  //         <div>
-  //           <p className="text-gray-400 font-bold text-sm text-left">Total</p>
-  //           <p className="pt-2 font-bold  text-slate-800">
-  //             £ {list_item[0].price * list_item[0].qty}
-  //           </p>
-  //         </div>
-  //       </div>
-  //       <div className="flex justify-between mx-5 rounded-md  bg-slate-800 p-3">
-  //         <p className="text-white">Amount</p>
-  //         <p className="text-white text-2xl">
-  //           £ {list_item[0].price * list_item[0].qty}
-  //         </p>
-  //       </div>
-  //     </>
-  //   );
-  // });
-
+  let [show, setShow] = useState(false);
+  const handlClick = () => {
+    setShow(true)
+    console.log("click edit");
+  };
   return (
     <React.Fragment>
-      <ul className={`${receipt.receipt_list} w-3/6`}>
-        <li className={receipt.receipt}>
-          <Link to="/receipt" className={receipt.receipt_main}>
-            <div className={receipt.receipt_left}>
-              <p className={receipt.receipt_info}>
+      <ul className="flex justify-center items-center m-0  mb-5 flex-col p-0 list-none w-3/6">
+        <li className="w-full">
+          <div className="flex justify-between items-center shadow-xl bg-white p-7 box-border rounded-md">
+            <div className="flex items-center gap-11">
+              <p className="gap-4 flex  items-center text-gray-600 ">
                 status
-                <div className={`${receipt.status}`}>
-                  <button
-                    type="button"
-                    className={`${receipt.type} rounded-lg`}
-                  >
-                    Paid
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="rounded-lg p-2 w-24 bg-green-100 text-green-500"
+                >
+                  {" "}
+                  Paid
+                </button>
               </p>
             </div>
-            <div className={receipt.receipt_right}>
+            <div className="flex  gap-3 items-center justify-center">
               <div>
                 <button
                   type="button"
-                  className={`p-3 rounded-full  ${receipt.edit}`}
+                  className="p-3 rounded-full w-20 bg-indigo-100  text-indigo-600  hover:bg-indigo-200 "
+                  onClick={handlClick}
                 >
-                  Edit{" "}
+                  Edit
                 </button>
               </div>
-              <div className={`${receipt.status} rounded-lg`}>
+              <div className="rounded-lg flex justify-center gap-10">
                 <button
                   type="button"
-                  onClick={toggleDelete}
-                  className={`bg-red-600 text-white p-3 rounded-full`}
+                  onClick={() => toggleDelete(product.id)}
+                  className="bg-red-400  hover:bg-red-600 text-white p-3 rounded-full w-20"
                 >
                   Delete
                   <Transition.Root show={open} as={Fragment}>
@@ -178,10 +103,8 @@ function Invoicelist() {
                                     </Dialog.Title>
                                     <div className="mt-2">
                                       <p className="text-sm text-gray-500">
-                                        Are you sure you want to deactivate your
-                                        account? All of your data will be
-                                        permanently removed. This action cannot
-                                        be undone.
+                                        Are you sure you want to delete invoice
+                                        #{id}? This action cannot be undone.
                                       </p>
                                     </div>
                                   </div>
@@ -190,8 +113,8 @@ function Invoicelist() {
                               <div className=" px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <button
                                   type="button"
-                                  className="inline-flex w-full justify-center   text-sm font-semibold shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto      bg-red-600 text-white p-3 rounded-full"
-                                  onClick={() => setOpen(false)}
+                                  className="inline-flex w-full justify-center   text-sm font-semibold shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto   bg-red-600 text-white p-3 rounded-full"
+                                  onClick={() => handleDelete(id)}
                                 >
                                   Delete
                                 </button>
@@ -211,48 +134,96 @@ function Invoicelist() {
                     </Dialog>
                   </Transition.Root>
                 </button>
-              </div>{" "}
-              <div className={`${receipt.status} rounded-lg`}>
+              </div>
+              <div className="button">
                 <button
                   type="button"
-                  className={`${receipt.delete} text-white p-3 rounded-full`}
+                  className=" bg-indigo-100 text-white p-3 rounded-full"
                 >
                   Mark as Paid
                 </button>
               </div>
             </div>
-          </Link>
+          </div>
         </li>
-        {/* <li className={receipt.receipt}>
-                    <div className={receipt.receipt_main }>
-                        <div className={receipt.receipt_address}>
-                            <div className={receipt.receipt_address_left}>
-                                <h4 className='font-bold text-left'>RT3080</h4>
-                                <h6 className='text-gray-400 '>Re-branding</h6>
-                            </div>
-                            <div className={receipt.receipt_address_right}>
-                                <p className='text-gray-400 text-sm '>106 kendell Street</p>
-                                <p className='text-gray-400 text-sm text-left'>Sharrington</p>
-                                <p className='text-gray-400 text-sm text-left'>NR24 5WQ,</p>
-                                <p className='text-gray-400 text-sm text-left'>United Kingdom
-
-                                </p>
-                            </div>
-                        </div>
-                    
-                    </div>
-                    <div className={receipt.receipt_main}>
-                        <div className={receipt.receipt_middle}>
-                            <p>Invoice Date</p>
-                            <h4>2021-10-11</h4>
-                        </div>
-                    </div>
-                </li> */}
       </ul>
-      <h1>{product?.name}</h1>
-      {/* <div className=" w-3/6 border-solid  bg-white mx-auto  rounded-md pb-5 ">
-        {display}
-      </div> */}
+      <div className=" w-3/6 border-solid  bg-white mx-auto  rounded-md pb-5">
+        <div className="flex justify-between m-5">
+          <div className="left ">
+            <h1 className="text-left text-black font-bold">RT3080</h1>
+            <p className="text-gray-400">{product?.project}</p>
+          </div>
+          <div className="right ">
+            <p className="text-left text-gray-400">{product?.client_city}</p>
+            <p className="text-left  text-gray-400">{product?.zip}</p>
+            <p className="text-left text-gray-400">{product?.client_country}</p>
+          </div>
+        </div>
+        <div className="flex justify-between m-5 pt-3">
+          <div>
+            <p className="text-gray-400 text-base">Invoice Date</p>
+            <p className="font-bold text-left">{product?.date}</p>
+            <p className="pt-4  text-gray-400 text-base">payment Due</p>
+            <p className="font-bold text-left">{product?.date}</p>
+          </div>
+          <div className="w-1/3">
+            <p className="text-left text-gray-400 text-base">Bill To</p>
+            <p className="font-bold text-left ">{product?.name}</p>
+            <p className="text-left text-gray-400 text-base">
+              {product?.address},
+            </p>
+            <p className="text-left text-gray-400 text-base">
+              {product?.code},
+            </p>
+            <p className="text-left text-gray-400 text-base">
+              {product?.city},
+            </p>
+          </div>
+          <div>
+            <p className="text-left text-gray-400">Sent to</p>
+            <p className="font-bold text-left">{product?.email}</p>
+          </div>
+        </div>
+        {product?.list_item.map((item) => {
+          const { list, qty, price } = item;
+          return (
+            <>
+              <div className="flex justify-between rounded-md bg-gray-100 mx-5 pt-5 pb-5 px-2">
+                <div>
+                  <p className="text-gray-400 font-bold text-sm text-left">
+                    Item Name
+                  </p>
+                  <p className="pt-2 font-bold text-slate-800">{list}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 font-bold text-sm text-left">
+                    QTY
+                  </p>
+                  <p className="pt-2 font-bold text-slate-800">{qty}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 font-bold text-sm text-left">
+                    Price
+                  </p>
+                  <p className="pt-2 font-bold text-slate-800">£ {price}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 font-bold text-sm text-left">
+                    Total
+                  </p>
+                  <p className="pt-2 font-bold  text-slate-800">
+                    £ {price * qty}
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-between mx-5 rounded-md  bg-slate-800 p-3 text-white">
+                <p>Amount</p>
+                <p className="text-2xl">£ {price * qty}</p>
+              </div>
+            </>
+          );
+        })}
+      </div>
     </React.Fragment>
   );
 }

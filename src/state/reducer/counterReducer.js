@@ -1,34 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 const initialState = {
-  value: 0,
-  name: "zazu",
   user: [],
+  modal: {
+    isOpen: false,
+    id: "",
+  },
 };
 
 export const counterSlice = createSlice({
   name: "counter",
   initialState,
   reducers: {
-    // increment: (state) => {
-    //   state.value += 1;
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1;
-    // },
-    // incrementByAmount: (state, action) => {
-    //   state.value += action.payload;
-    // },
-    // changeName: (state, action) => {
-    //   state.name = action.payload;
-    // },
     userData: (state, action) => {
       state.user = [...state.user, action.payload];
+    },
+    deleteUser: (state, action) => {
+      const itemId = action.payload;
+      console.log(itemId, "this is counter delete ");
+      state.user = state.user.filter((item) => item.id !== itemId);
+    },
+    isModal: (state, { payload }) => {
+      state.modal.isOpen = payload.isOpen;
+      state.modal.id = payload.id;
     },
   },
 });
 
-export const {changeName, userData } =
+export const { changeName, userData, deleteUser, isModal } =
   counterSlice.actions;
 
 export default counterSlice.reducer;
