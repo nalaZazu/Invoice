@@ -9,8 +9,12 @@ import Info from "./Info";
 import { store } from "./state/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import { useEffect } from "react";
+
 let persistor = persistStore(store);
+
 function App() {
+ 
   return (
     <div className="App  flex flex-nowrap flex-col justify-center">
       <Provider store={store}>

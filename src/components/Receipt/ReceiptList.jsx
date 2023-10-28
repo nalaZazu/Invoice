@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import receipt from "./Receipt.module.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUser, isModal } from "../../state/reducer/counterReducer";
+import {
+  deleteUser,
+  isModal,
+  toggleStatus,
+} from "../../state/reducer/counterReducer";
 import Edit from "../Edit";
 function Invoicelist() {
   let { id } = useParams();
@@ -21,13 +25,33 @@ function Invoicelist() {
     dispatch(deleteUser(id));
     move("/");
   };
+  const [product, setProduct] = useState();
+  const [change, setChange] = useState(false);
   let invoiceData = useSelector((store) => store.counter.user);
-  let product = invoiceData.find((e) => e.id == id);
-  let [show, setShow] = useState(false);
-  const handlClick = () => {
-    setShow(true)
-    console.log("click edit");
+  useEffect(() => {
+    let data = invoiceData.find((e) => e.id === id);
+    setProduct(data);
+  }, [!change]);
+
+  const status = useSelector((state) => state.counter.status);
+  console.log(status, "toggle status");
+
+  let [stateData, setStateData] = useState(product);
+  console.log(stateData, "statedate geting");
+  const handClick = () => {
+    const newState = stateData.map((item) => {
+      console.log(item, "in map function item");
+      if (item.status == "Pending") {
+        return [{ ...item, status: "Paid" }];
+      }
+      return item;
+    });
+    console.log(newState, "new satte function");
+    setStateData(newState);
+    console.log(product.status, "product stautus get value");
+    dispatch(toggleStatus(id));
   };
+
   return (
     <React.Fragment>
       <ul className="flex justify-center items-center m-0  mb-5 flex-col p-0 list-none w-3/6">
@@ -36,24 +60,26 @@ function Invoicelist() {
             <div className="flex items-center gap-11">
               <p className="gap-4 flex  items-center text-gray-600 ">
                 status
-                <button
-                  type="button"
-                  className="rounded-lg p-2 w-24 bg-green-100 text-green-500"
-                >
-                  {" "}
-                  Paid
-                </button>
+                {product?.status === "Pending" ? (
+                  <button
+                    type="button"
+                    className="rounded-lg p-2 w-24 bg-green-100 text-green-500"
+                  >
+                    Paid
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="rounded-lg p-2 w-24 bg-orange-100 text-orange-600"
+                  >
+                    Pending
+                  </button>
+                )}
               </p>
             </div>
             <div className="flex  gap-3 items-center justify-center">
               <div>
-                <button
-                  type="button"
-                  className="p-3 rounded-full w-20 bg-indigo-100  text-indigo-600  hover:bg-indigo-200 "
-                  onClick={handlClick}
-                >
-                  Edit
-                </button>
+                <Edit product={product} setChange={setChange} />
               </div>
               <div className="rounded-lg flex justify-center gap-10">
                 <button
@@ -139,6 +165,7 @@ function Invoicelist() {
                 <button
                   type="button"
                   className=" bg-indigo-100 text-white p-3 rounded-full"
+                  onClick={handClick}
                 >
                   Mark as Paid
                 </button>
@@ -184,45 +211,46 @@ function Invoicelist() {
             <p className="font-bold text-left">{product?.email}</p>
           </div>
         </div>
-        {product?.list_item.map((item) => {
-          const { list, qty, price } = item;
-          return (
-            <>
-              <div className="flex justify-between rounded-md bg-gray-100 mx-5 pt-5 pb-5 px-2">
-                <div>
-                  <p className="text-gray-400 font-bold text-sm text-left">
-                    Item Name
-                  </p>
-                  <p className="pt-2 font-bold text-slate-800">{list}</p>
+        {product?.list_item &&
+          product?.list_item.map((item) => {
+            const { list, qty, price } = item;
+            return (
+              <>
+                <div className="flex justify-between rounded-md bg-gray-100 mx-5 pt-5 pb-5 px-2">
+                  <div>
+                    <p className="text-gray-400 font-bold text-sm text-left">
+                      Item Name
+                    </p>
+                    <p className="pt-2 font-bold text-slate-800">{list}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 font-bold text-sm text-left">
+                      QTY
+                    </p>
+                    <p className="pt-2 font-bold text-slate-800">{qty}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 font-bold text-sm text-left">
+                      Price
+                    </p>
+                    <p className="pt-2 font-bold text-slate-800">£ {price}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 font-bold text-sm text-left">
+                      Total
+                    </p>
+                    <p className="pt-2 font-bold  text-slate-800">
+                      £ {price * qty}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-400 font-bold text-sm text-left">
-                    QTY
-                  </p>
-                  <p className="pt-2 font-bold text-slate-800">{qty}</p>
+                <div className="flex justify-between mx-5 rounded-md  bg-slate-800 p-3 text-white">
+                  <p>Amount</p>
+                  <p className="text-2xl">£ {price * qty}</p>
                 </div>
-                <div>
-                  <p className="text-gray-400 font-bold text-sm text-left">
-                    Price
-                  </p>
-                  <p className="pt-2 font-bold text-slate-800">£ {price}</p>
-                </div>
-                <div>
-                  <p className="text-gray-400 font-bold text-sm text-left">
-                    Total
-                  </p>
-                  <p className="pt-2 font-bold  text-slate-800">
-                    £ {price * qty}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-between mx-5 rounded-md  bg-slate-800 p-3 text-white">
-                <p>Amount</p>
-                <p className="text-2xl">£ {price * qty}</p>
-              </div>
-            </>
-          );
-        })}
+              </>
+            );
+          })}
       </div>
     </React.Fragment>
   );

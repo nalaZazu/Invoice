@@ -1,23 +1,22 @@
 import React, { useState } from "react";
 import { Fragment } from "react";
 import { Transition } from "@headlessui/react";
-import header from "../Header/Header.module.css";
 import { Dialog } from "@headlessui/react";
 import { FieldArray, Form, Formik, getIn } from "formik";
 import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Sidebar from "../Sidebar/Sidebar";
-import { updateData } from "../../state/reducer/counterReducer";
+import { userData } from "../../state/reducer/counterReducer";
 import { v4 as uuidv4 } from "uuid";
-import { useParams } from "react-router-dom";
-const Edit = ({ product, setChange }) => {
+const FormData = () => {
+  const [open, setOpen] = useState(false);
+  const toggleButton = () => {
+    setOpen(!open);
+  };
   let uId = uuidv4();
+  // store value configuration
   let dispatch = useDispatch();
-  let { id } = useParams();
-  let update = useSelector((store) => store.counter.user);
-  console.log(update, "update data");
-  console.log(update, "index edit data");
-  console.log(id, "edit index id");
+  //   yup validation
   const SignupSchema = Yup.object().shape({
     address: Yup.string().required("Address is reuqired"),
     city: Yup.string().required("City Name is required"),
@@ -33,7 +32,6 @@ const Edit = ({ product, setChange }) => {
     project: Yup.string().required("Project description"),
     date: Yup.string().required("select date "),
   });
-
   function getStyles(errors, fieldName) {
     if (getIn(errors, fieldName)) {
       return {
@@ -41,25 +39,25 @@ const Edit = ({ product, setChange }) => {
       };
     }
   }
-  let [show, setShow] = useState(false);
-  const handlClick = () => {
-    setShow(true);
-  };
   const handleCancel = (resetForm) => {
-    resetForm(); 
-    setShow(false)
+    resetForm();
+    setOpen(false);
   };
   return (
     <React.Fragment>
       <button
         type="button"
-        className="p-3 rounded-full w-20 bg-indigo-100  text-indigo-600  hover:bg-indigo-200 "
-        onClick={handlClick}
+        className="rounded font-bold"
+        onClick={toggleButton}
       >
-        Edit
+        {setOpen ? (
+          <button className="p-3">New Invoice</button>
+        ) : (
+          <button className="p-3">New Invoice</button>
+        )}
       </button>
-      <Transition.Root show={show} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setShow}>
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-500"
@@ -73,7 +71,7 @@ const Edit = ({ product, setChange }) => {
           </Transition.Child>
           <div className="fixed inset-0 overflow-hidden">
             <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 left-0  flex  w-full">
+              <div className="pointer-events-none fixed inset-y-0  left-0  flex  w-full">
                 <Transition.Child
                   as={Fragment}
                   enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -91,27 +89,47 @@ const Edit = ({ product, setChange }) => {
                       <Sidebar />
                       <div className="relative mt-6 flex-1 px-8 ">
                         <Formik
-                          initialValues={product}
+                          initialValues={{
+                            id: uId,
+                            status: "Pending",
+                            address: "",
+                            city: "",
+                            zip: "",
+                            country: "",
+                            name: "",
+                            email: "",
+                            street: "",
+                            client_city: "",
+                            code: "",
+                            client_country: "",
+                            terms: "",
+                            project: "",
+                            list_item: [
+                              {
+                                list: "",
+                                qty: "",
+                                price: "",
+                                total: "",
+                              },
+                            ],
+                          }}
                           enableReinitialize={true}
                           validationSchema={SignupSchema}
+                          validateOnBlur={false}
                           onSubmit={(values) => {
-                            dispatch(
-                              updateData({
-                                values,
-                                newData: values,
-                                id: values.id,
-                              })
-                            );
-                            setChange((e) => !e);
+                            dispatch(userData(values));
+                            console.log(values, "header value");
                           }}
                         >
-                          {({
+                          {
+                            ({
                             values,
                             handleSubmit,
                             handleChange,
                             errors,
                             setFieldValue,
-                            resetForm
+                            handleBlur,
+                            resetForm,
                           }) => (
                             <Form
                               className="w-full"
@@ -135,6 +153,7 @@ const Edit = ({ product, setChange }) => {
                                     name="address"
                                     value={values.address}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="text"
                                     style={getStyles(errors, "address")}
                                   />
@@ -153,11 +172,11 @@ const Edit = ({ product, setChange }) => {
                                       name="city"
                                       value={values.city}
                                       onChange={handleChange}
+                                      onBlur={handleBlur}
                                       type="text"
                                       style={getStyles(errors, "city")}
                                     />
                                   </div>
-
                                   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                                     <label
                                       className="block tracking-wide text-gray-400 text-xs  mb-2"
@@ -169,6 +188,7 @@ const Edit = ({ product, setChange }) => {
                                       className="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                       id="zip"
                                       onChange={handleChange}
+                                      onBlur={handleBlur}
                                       name="zip"
                                       value={values.zip}
                                       type="text"
@@ -187,6 +207,7 @@ const Edit = ({ product, setChange }) => {
                                       id="country"
                                       name="country"
                                       onChange={handleChange}
+                                      onBlur={handleBlur}
                                       value={values.country}
                                       type="text"
                                       style={getStyles(errors, "country")}
@@ -194,9 +215,7 @@ const Edit = ({ product, setChange }) => {
                                   </div>
                                 </div>
                               </div>
-
-                              {/* second input  */}
-                              <Dialog.Title className="text-indigo-500 text-base font-semibold leading-6 mt-6 ml-3 ">
+                              <Dialog.Title className="text-base font-semibold leading-6 mt-6 ml-3 text-indigo-500">
                                 Bill To
                               </Dialog.Title>
                               <div className="flex flex-wrap  mb-6">
@@ -213,6 +232,7 @@ const Edit = ({ product, setChange }) => {
                                     name="name"
                                     value={values.name}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="text"
                                     style={getStyles(errors, "name")}
                                   />
@@ -232,6 +252,7 @@ const Edit = ({ product, setChange }) => {
                                     name="email"
                                     value={values.email}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="text"
                                     placeholder="email@gmail.com"
                                     style={getStyles(errors, "email")}
@@ -252,6 +273,7 @@ const Edit = ({ product, setChange }) => {
                                     name="street"
                                     value={values.street}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="text"
                                     style={getStyles(errors, "street")}
                                   />
@@ -271,6 +293,7 @@ const Edit = ({ product, setChange }) => {
                                     name="client_city"
                                     value={values.client_city}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="text"
                                     style={getStyles(errors, "client_city")}
                                   />
@@ -286,6 +309,7 @@ const Edit = ({ product, setChange }) => {
                                     className="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     id="code"
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     name="code"
                                     value={values.code}
                                     type="text"
@@ -304,6 +328,7 @@ const Edit = ({ product, setChange }) => {
                                     id="client_country"
                                     name="client_country"
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     value={values.client_country}
                                     type="text"
                                     style={getStyles(errors, "client_country")}
@@ -324,6 +349,7 @@ const Edit = ({ product, setChange }) => {
                                     name="date"
                                     value={values.date}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="date"
                                     style={getStyles(errors, "date")}
                                   />
@@ -341,6 +367,7 @@ const Edit = ({ product, setChange }) => {
                                     id="terms"
                                     value={values.terms}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     style={getStyles(errors, "terms")}
                                   >
                                     <option>Next 1 day</option>
@@ -371,19 +398,20 @@ const Edit = ({ product, setChange }) => {
                                     name="project"
                                     value={values.project}
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                     type="text"
                                     placeholder="e.g graphic Design services"
                                     style={getStyles(errors, "project")}
                                   />
                                 </div>
                               </div>
-                              <Dialog.Title className="text-base font-semibold leading-6 mt-6 text-gray-400 text-md ml-3">
+                              <Dialog.Title className="text-base font-semibold leading-6 mt-6 text-gray-400 text-md ml-3 ">
                                 Item List
                               </Dialog.Title>
                               <FieldArray name="list_item">
-                                {({ remove, push }) => (
+                                {({ insert, remove, push }) => (
                                   <div>
-                                    {values?.list_item.length > 0 &&
+                                    {values.list_item.length > 0 &&
                                       values.list_item.map((item, index) => {
                                         return (
                                           <div className="flex flex-wrap  mb-2">
@@ -399,8 +427,8 @@ const Edit = ({ product, setChange }) => {
                                                 className="appearance-none block w-full bg-white text-gray-500 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                 name={`list_item.${index}.list`}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
                                                 type="text"
-                                                value={item.list}
                                               />
                                             </div>
                                             <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
@@ -412,10 +440,10 @@ const Edit = ({ product, setChange }) => {
                                               </label>
                                               <input
                                                 className="appearance-none block w-full bg-white text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                onBlur={handleBlur}
                                                 onChange={handleChange}
                                                 name={`list_item.${index}.qty`}
                                                 type="text"
-                                                value={item.qty}
                                               />
                                             </div>
                                             <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
@@ -428,9 +456,9 @@ const Edit = ({ product, setChange }) => {
                                               <input
                                                 className="appearance-none block w-full bg-white text-gray-700 border  border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
                                                 name={`list_item.${index}.price`}
                                                 type="text"
-                                                value={item.price}
                                               />
                                             </div>
                                             <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
@@ -454,10 +482,10 @@ const Edit = ({ product, setChange }) => {
                                                 type="text"
                                               />
                                             </div>
-                                            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0 mt-6  flex justify-center">
+                                            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0 mt-6  flex justify-center ">
                                               <button
                                                 type="button"
-                                                className="secondary "
+                                                className="secondary"
                                                 onClick={() => remove(index)}
                                               >
                                                 X
@@ -468,7 +496,7 @@ const Edit = ({ product, setChange }) => {
                                       })}
                                     <button
                                       type="button"
-                                      className="hover:bg-indigo-50 w-full  mt-3 text-zinc-500 p-3 rounded-full font-bold  "
+                                      className="bg-indigo-50 w-full  mt-3 text-indigo-500 p-3 rounded-full "
                                       onClick={() =>
                                         push({
                                           list: "",
@@ -483,20 +511,29 @@ const Edit = ({ product, setChange }) => {
                                   </div>
                                 )}
                               </FieldArray>
-                              <div className="flex justify-end gap-2">
-                                <button className="bg-indigo-50 w-28  font-bold mt-3 text-gray-500 p-3 rounded-full"       onClick={() => handleCancel(resetForm)}>
-                                  cancel
-                                </button>
-                                <button
-                                  type="submit"
-                                  className="bg-indigo-500  mt-3 text-white font-bold p-3 rounded-full"
-                                  onClick={() => setShow(false)}
-                                >
-                                  Save Change
-                                </button>
-                              </div>
+                              <button
+                                onClick={() => handleCancel(resetForm)}
+                                className="bg-indigo-50   mt-3 text-indigo-500 p-3 rounded-full"
+                              >
+                                Discard
+                              </button>
+                              <button
+                                type="submit"
+                                className="bg-indigo-50  hover:bg-indigo-500 float-right mt-3 ml-1 text-white font-bold p-3 rounded-full"
+                                onClick={() => setOpen(false)}
+                              >
+                                Save & Send
+                              </button>
+                              <button
+                                type="submit"
+                                className="bg-gray-400 hover:bg-black float-right mt-3 text-gray-700 font-bold p-3 rounded-full"
+                                onClick={() => setOpen(false)}
+                              >
+                                Save as Draft
+                              </button>
                             </Form>
-                          )}
+                          )
+                          }
                         </Formik>
                       </div>
                     </div>
@@ -511,4 +548,4 @@ const Edit = ({ product, setChange }) => {
   );
 };
 
-export default Edit;
+export default FormData;
